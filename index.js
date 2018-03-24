@@ -130,7 +130,7 @@ setPowerState: function(powerState, callback, context) {
 
 //if context is statuspoll, then we need to ensure that we do not set the actual value
 	if (context && context == "statuspoll") {
-		this.log( "setPowerState - polling mode, ignore, state: %s", this.state);
+		this.log.debug( "setPowerState - polling mode, ignore, state: %s", this.state);
 		callback(null, powerState);
 	    return;
 	}
@@ -154,7 +154,7 @@ setPowerState: function(powerState, callback, context) {
 
     this.httpRequest(url, body, this.http_method, this.username, this.password, this.sendimmediately, function(error, response, responseBody) {
 		if (error) {
-			that.log('setPowerState - actual mode - failed: %s', error.message);
+			that.log.error('setPowerState - actual mode - failed: %s', error.message);
 			powerState = false;
 			that.state = powerState;
 			that.log("setPowerState - actual mode - current state: %s", that.state);
@@ -164,7 +164,7 @@ setPowerState: function(powerState, callback, context) {
 			callback(null, powerState);
 		} else {
 			that.state = powerState;
-			that.log("setPowerState - actual mode - current state: %s", that.state);
+			that.log.debug("setPowerState - actual mode - current state: %s", that.state);
 			callback(null, powerState);
 		}
     }.bind(this));
