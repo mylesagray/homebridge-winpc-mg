@@ -51,7 +51,7 @@ function HttpStatusAccessory(log, config)
 		var powerurl = this.status_url;
 		
 		var statusemitter = pollingtoevent(function(done) {
-			that.log("start polling..");
+			that.log.debug("start polling..");
 			that.getPowerState( function( error, response) {
 				//pass also the setAttempt, to force a homekit update if needed
 				done(error, response, that.setAttempt);
@@ -60,7 +60,7 @@ function HttpStatusAccessory(log, config)
 
 		statusemitter.on("statuspoll", function(data) {
 			that.state = data;
-			that.log("event - status poller - new state: ", that.state);
+			that.log.debug("event - status poller - new state: ", that.state);
 
 			if (that.switchService ) {
 				that.switchService.getCharacteristic(Characteristic.On).setValue(that.state, null, "statuspoll");
@@ -174,7 +174,7 @@ getPowerState: function(callback, context) {
 //if context is statuspoll, then we need to request the actual value
 	if (!context || context != "statuspoll") {
 		if (this.switchHandling == "poll") {
-			this.log("getPowerState - polling mode, return state: ", this.state);
+			this.log.debug("getPowerState - polling mode, return state: ", this.state);
 			callback(null, this.state);
 			return;
 		}
@@ -187,7 +187,7 @@ getPowerState: function(callback, context) {
     }
     
     var url = this.status_url;
-    this.log("getPowerState - actual mode");
+    this.log.debug("getPowerState - actual mode");
 	var that = this;
 
     this.httpRequest(url, "", "GET", this.username, this.password, this.sendimmediately, function(error, response, responseBody) {
@@ -205,15 +205,15 @@ getPowerState: function(callback, context) {
 			}
 		}
 		if (tError) {
-			that.log('getPowerState - actual mode - failed: %s', error.message);
+			that.log.error('getPowerState - actual mode - failed: %s', error.message);
 			var powerState = false;
-			that.log("getPowerState - actual mode - current state: %s", powerState);
+			that.log.error("getPowerState - actual mode - current state: %s", powerState);
 			that.state = powerState;
 			callback(null, powerState);
 		} else {
 			var binaryState = parseInt(tResp);
 			var powerState = binaryState > 0;
-			that.log("getPowerState - actual mode - current state: %s", powerState);
+			that.log.debug("getPowerState - actual mode - current state: %s", powerState);
 			that.state = powerState;
 			callback(null, powerState);
 		}
